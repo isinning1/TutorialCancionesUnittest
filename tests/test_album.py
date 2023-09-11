@@ -18,7 +18,7 @@ class AlbumTestCase(unittest.TestCase):
         '''Abre la sesión'''
         self.session = Session()
 
-        '''Crea una isntancia de Faker'''
+        '''Crea una instancia de Faker'''
         self.data_factory = Faker()
 
         '''Se programa para que Faker cree los mismos datos cuando se ejecuta'''
@@ -29,29 +29,28 @@ class AlbumTestCase(unittest.TestCase):
         self.albumes = []
         self.medios = [Medio.CD, Medio.CASETE, Medio.DISCO]
 
-        for i in range(0,10):
+        for i in range(0, 10):
             self.data.append((
                 self.data_factory.unique.name(),
-                self.data_factory.random_int(1800,2021),
+                self.data_factory.random_int(1800, 2021),
                 self.data_factory.text(),
                 random.choice(self.medios)))
             self.albumes.append(
                 Album(
-                    titulo = self.data[-1][0],
-                    ano = self.data[-1][1],
-                    descripcion = self.data[-1][2],
-                    medio = self.data[-1][3],
-                    canciones = []
+                    titulo=self.data[-1][0],
+                    ano=self.data[-1][1],
+                    descripcion=self.data[-1][2],
+                    medio=self.data[-1][3],
+                    canciones=[]
                  ))
             self.session.add(self.albumes[-1])
 
-
         '''Persiste los objetos
-            En este setUp no se cierra la sesión para usar los albumes en las pruebas'''
+            En este setUp no se cierra la sesión para usar los álbumes en las pruebas'''
         self.session.commit()
     
     def test_constructor(self):
-       for album, dato in zip(self.albumes, self.data):
+        for album, dato in zip(self.albumes, self.data):
             self.assertEqual(album.titulo, dato[0])
             self.assertEqual(album.ano, dato[1])
             self.assertEqual(album.descripcion, dato[2])
@@ -59,46 +58,54 @@ class AlbumTestCase(unittest.TestCase):
 
     def test_agregar_album(self):
         '''Prueba la adición de un álbum'''
-        self.data.append((self.data_factory.unique.name(), self.data_factory.random_int(1800, 2021), self.data_factory.text(), random.choice(self.medios)))
+        nuevo_album = Album(
+            titulo=self.data_factory.unique.name(),
+            ano=self.data_factory.random_int(1800, 2021),
+            descripcion=self.data_factory.text(),
+            medio=random.choice(self.medios),
+            canciones=[]
+        )
 
-        resultado = self.coleccion.agregar_album(
-            titulo = self.data[-1][0],
-            anio = self.data[-1][1],
-            descripcion = self.data[-1][2],
-            medio = self.data[-1][3])
-        self.assertTrue(resultado)  # Cambiado a assertTrue
- 
+        resultado = self.coleccion.agregar_album(nuevo_album)
+        self.assertTrue(resultado)
+
     def test_agregar_album_repetido(self):
         '''Prueba la adición de un álbum repetido en el setup'''
-        resultado = self.coleccion.agregar_album(
-            titulo = self.data[-1][0],
-            anio = self.data[-1][1],
-            descripcion = self.data[-1][2],
-            medio = self.data[-1][3])
-        self.assertNotEqual(resultado, True)
+        album_existente = self.albumes[0]
+
+        resultado = self.coleccion.agregar_album(album_existente)
+        self.assertFalse(resultado)
 
     def test_editar_album(self):
         '''Prueba la edición de dos álbumes'''
-        self.data.append((self.data_factory.unique.name(), self.data_factory.random_int(1800, 2021), self.data_factory.text(), random.choice(self.medios)))
+        album_a_editar = self.albumes[0]
+        nuevo_titulo = self.data_factory.unique.name()
 
-        # Se cambia el título el primer álbum creado por uno que no existe
         resultado1 = self.coleccion.editar_album(
-            album_id = 1,
-            titulo = self.data[-1][0],
-            anio = self.data[-1][1],
-            descripcion = self.data[-1][2],
-            medio = self.data[-1][3])
+            album_a_editar,
+            titulo=nuevo_titulo,
+            ano=album_a_editar.ano,
+            descripcion=album_a_editar.descripcion,
+            medio=album_a_editar.medio
+        )
 
-        # Se cambia el título del segundo álbum creado por uno que ya existe
+        album_no_existente = Album(
+            titulo=self.data_factory.unique.name(),
+            ano=self.data_factory.random_int(1800, 2021),
+            descripcion=self.data_factory.text(),
+            medio=random.choice(self.medios),
+            canciones=[]
+        )
         resultado2 = self.coleccion.editar_album(
-            album_id = 2,
-            titulo = self.data[-3][0],
-            anio = self.data[-3][1],
-            descripcion = self.data[-3][2],
-            medio = self.data[-3][3])
+            album_no_existente,
+            titulo=self.data_factory.unique.name(),
+            ano=self.data_factory.random_int(1800, 2021),
+            descripcion=self.data_factory.text(),
+            medio=random.choice(self.medios)
+        )
 
-        self.assertTrue(resultado1)  # Cambiado a assertTrue
-        self.assertFalse(resultado2)  # Cambiado a assertFalse
+        self.assertTrue(resultado1)
+        self.assertFalse(resultado2)
 
     def test_albumes_iguales(self):
         '''Prueba si dos álbumes son la misma referencia a un objeto al recuperar un album del almacenamiento'''
