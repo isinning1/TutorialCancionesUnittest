@@ -50,3 +50,27 @@ class AlbumTestCase(unittest.TestCase):
         '''Prueba la adición de un álbum'''
         resultado = self.coleccion.agregar_album(titulo = "Nada personal", anio = 1985, descripcion = "No tiene", medio = Medio.CASETE)
         self.assertEqual(resultado, True)     
+
+    def test_editar_album(self):
+        '''Prueba la edición de dos álbumes'''
+        #Se cambia el título el primer álbum creado por uno que no existe
+        resultado1 = self.coleccion.editar_album(album_id = 1, titulo = "Corazones Remastered", anio = 1985, descripcion = "No tiene", medio = Medio.CASETE)
+
+        #Se cambia el título del segundo álbum creado por uno que ya existe
+        resultado2 = self.coleccion.editar_album(album_id = 2, titulo = "Pateando piedras", anio = 1985, descripcion = "No tiene", medio = Medio.CASETE)
+
+        self.assertTrue(resultado1)
+        self.assertFalse(resultado2)
+
+    def test_albumes_iguales(self):
+        '''Prueba si dos álbumes son la misma referencia a un objeto'''
+        album_nuevo = self.album1
+        album_recuperado = self.coleccion.dar_album_por_id(1)
+        self.assertIs(album_nuevo, self.album1)
+        self.assertIsNot(album_recuperado, self.album1)
+
+    def test_elemento_en_conjunto(self):
+        '''Prueba que un elemento se encuentre en un conjunto'''
+        conjunto = [self.album1, self.album2, self.album3]
+   self.assertIn(self.album1, conjunto)
+   self.assertNotIn(self.album4, conjunto)
