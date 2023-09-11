@@ -9,5 +9,3 @@ class AlbumTestCase(unittest.TestCase):
     def test_prueba(self):
         self.assertEqual(0, 0)
     
-    def test_prueba(self):
-        self.assertEqual(0, 1)
