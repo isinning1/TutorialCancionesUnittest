@@ -72,5 +72,5 @@ class AlbumTestCase(unittest.TestCase):
     def test_elemento_en_conjunto(self):
         '''Prueba que un elemento se encuentre en un conjunto'''
         conjunto = [self.album1, self.album2, self.album3]
-   self.assertIn(self.album1, conjunto)
-   self.assertNotIn(self.album4, conjunto)
+        self.assertIn(self.album1, conjunto)
+        self.assertNotIn(self.album4, conjunto)
