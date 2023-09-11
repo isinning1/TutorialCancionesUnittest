@@ -74,3 +74,18 @@ class AlbumTestCase(unittest.TestCase):
         conjunto = [self.album1, self.album2, self.album3]
         self.assertIn(self.album1, conjunto)
         self.assertNotIn(self.album4, conjunto)
+
+    def test_instancia_clase(self):
+        '''Prueba que un elemento sea de una clase'''
+        self.assertIsInstance(self.album1, Album)
+        self.assertNotIsInstance(self.coleccion, Album)
+
+    def test_verificar_almacenamiento_agregar_album(self):
+        '''Verifica que al almacenar los datos queden guardados en la el almacenamiento'''
+        self.coleccion.agregar_album(titulo="Signos", anio=1986, descripcion="No tiene", medio=Medio.DISCO)
+
+        self.session = Session()
+        album = self.session.query(Album).filter(Album.titulo == 'Signos' and Album.medio == Medio.DISCO).first()
+
+        self.assertEqual(album.titulo, 'Signos')
+        self.assertEqual(album.ano, 1986)
